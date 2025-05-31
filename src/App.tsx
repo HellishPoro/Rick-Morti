@@ -1,27 +1,30 @@
 import { Routes, Route } from 'react-router-dom'
-import {Home} from './pages/Home/Home'
-import { Navbar } from './components/Navbar/NavBar'
-import { Detail } from './pages/Detail/Detail'
-import { Category } from './pages/Category/Category'
-import { NotFound } from './pages/NotFound/NotFound'
-import { AuthProvider } from './context/AuthProvider'
-import { Signin } from './components/Login/Signin'
 import { PrivedRout } from './components/PrivedRout/PrivedRout'
+import { lazy, Suspense } from 'react'
 import './App.css'
 
 function App() {
+  const Home = lazy(()=> import('./pages/Home/Home').then(module => ({default: module.Home})))
+  const Category = lazy(()=> import('./pages/Category/Category').then(module => ({default: module.Category})))
+  const Detail = lazy(()=> import('./pages/Detail/Detail').then(module => ({default: module.Detail})))
+  const Signin = lazy(()=> import('./components/Login/Signin').then(module => ({default: module.Signin})))
+  const NotFound = lazy(()=> import('./pages/NotFound/NotFound').then(module => ({default: module.NotFound})))
+  const Navbar = lazy(()=> import('./components/Navbar/NavBar').then(module => ({default: module.Navbar})))
+  const AuthProvider = lazy(()=> import('./context/AuthProvider').then(module => ({default: module.AuthProvider})))
 
   return (
-    <AuthProvider>
-      <Navbar/>
-      <Routes>
-        <Route path='/' element={<Home/>}/>
-        <Route path='/:category' element={<PrivedRout><Category/></PrivedRout>}/>
-        <Route path='/:category/:id' element={<PrivedRout><Detail/></PrivedRout>}/>
-        <Route path='/login' element={<Signin/>}/>
-        <Route path='*' element={<NotFound/>}/>
-      </Routes>
-    </AuthProvider>
+    <Suspense>
+      <AuthProvider>
+        <Navbar/>
+        <Routes>
+          <Route path='/' element={<Home/>}/>
+          <Route path='/:category' element={<PrivedRout><Category/></PrivedRout>}/>
+          <Route path='/:category/:id' element={<PrivedRout><Detail/></PrivedRout>}/>
+          <Route path='/login' element={<Signin/>}/>
+          <Route path='*' element={<NotFound/>}/>
+        </Routes>
+      </AuthProvider>
+    </Suspense>
   )
 }
 

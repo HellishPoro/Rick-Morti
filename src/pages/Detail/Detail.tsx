@@ -2,23 +2,26 @@ import { useParams } from 'react-router-dom'
 import { Episode } from './components/Episode';
 import { Location } from './components/Location';
 import { Characters } from './components/Characters';
-import { DATASETS } from '../../constants/datasets';
-import type { CharactersTypes, EpisodeTypes, LocationTypes, Type } from '../../types/types';
+import type { CharactersTypes, EpisodeTypes, LocationTypes } from '../../types/types';
+import { RESOURCE_MAP } from '../../constants/ResourceMap';
+import { useSingleItem } from '../../utils/useSingleItem';
 
 export const Detail = () => {
     const { category, id } = useParams<{category: string, id: string}>()
-    const data = (DATASETS as Record<'characters' | 'episode' | 'location', Type[]>)[category as keyof typeof DATASETS]
+    const resourceType = RESOURCE_MAP[category as string];
 
-    if(!data){
+    const {data, loading, error} = useSingleItem(resourceType as string, id as string);
+
+
+    if(loading) return <span>Loading...</span>
+    if(error) return <span>Error</span>  
+
+    if(!resourceType){
         return <span>This page does not exist</span>
     }
 
-    const transformedId = Number(id)
-
-    const item = data.find((el: Type)=> el.id === transformedId)
-
     if(category === 'characters'){
-        const character = item as CharactersTypes
+        const character = data as unknown as CharactersTypes
         return(
             <Characters
                 name={character.name}
@@ -31,7 +34,7 @@ export const Detail = () => {
     }
 
     if(category === 'episode'){
-        const episodes = item as EpisodeTypes
+        const episodes = data as unknown as EpisodeTypes
         return(
             <Episode 
                 name={episodes.name}
@@ -42,7 +45,7 @@ export const Detail = () => {
     }
 
     if(category === 'location'){
-        const locations = item as LocationTypes
+        const locations = data as unknown as LocationTypes
         return(
             <Location
                 name={locations.name}
