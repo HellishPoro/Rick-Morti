@@ -10,6 +10,6 @@ export const Location = ({name, type, dimension}: LocationProps)=>{
                 <h2>{name}</h2>
                 <p>Type: {type}</p>
                 <p>Deminsion: {dimension}</p>
-                </>
+        </>
     )
 }

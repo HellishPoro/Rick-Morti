@@ -1,35 +1,88 @@
-import { useParams, Link } from 'react-router-dom';
-import { DATASETS } from '../../constants/datasets';
+import { useParams } from 'react-router-dom';
+import { usePageCategory } from '../../utils/usePageCharacter';
+import { RESOURCE_MAP } from '../../constants/ResourceMap';
+import ErrorBoundary from '../../utils/ErrorBoundary';
+import { DataComponent } from './components/DataComponent';
 import './Category.css'
+import { useCallback, useRef, useState } from 'react';
+
+type RouteParams = {
+  category?: string;
+};
+
+type ItemType = {
+  id: number;
+  name: string;
+  image?: string;
+};
 
 export const Category = ()=>{
-  const { category } = useParams()
-  const data = DATASETS[category as keyof typeof DATASETS]
+  const { category } = useParams<RouteParams>()
+  const [pageNumber, setPageNumber] = useState<number>(1);
+  const resourceType = RESOURCE_MAP[category as string];
 
-  if(!data){
+  const observer = useRef<IntersectionObserver | null>(null)
+
+  const {data, loading, error, hasMore} = usePageCategory(pageNumber as number, resourceType as string);
+
+  const lastNodeRef = useCallback((node: HTMLLIElement | null) => {
+    if (loading) return;
+    if (observer.current) {
+      observer.current.disconnect();
+    }
+
+    observer.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasMore) {
+        setPageNumber((prevState) => prevState + 1);
+      }
+    });
+
+    if (node) {
+      observer.current.observe(node);
+    }
+
+    console.log('Observer is set up for the last node:', node);
+  }, [loading, hasMore]);
+
+
+  if(loading) return <span>Loading...</span>
+  if(error) return <span>Error</span>  
+
+  if(!data || data.length === 0){
     return <span>No such category found.</span>
   }
-  
+
   return (
     <div className="box">
       <h2>{category?.toUpperCase()}</h2>
-      <ul>
-        {data.map(item => (
-          <li key={item.id}>
-            <Link to={`/${category}/${item.id}`}>
-          {category === 'characters' && 'image' in item ? (
-            <>
-              <img src={item.image} alt={item.name} />
-              <p>{item.name}</p>
-            </>
-            
-          ) : (
-            item.name
-          )}
-        </Link>
-          </li>
-        ))}
-      </ul>
+      <ErrorBoundary>
+        <ul>
+          {data.map((item: ItemType, index: number) => {
+            if (data.length  === index + 1) {
+              return (
+                <DataComponent
+                ref={lastNodeRef}
+                key={item.id}
+                id={item.id}
+                image={item.image}
+                name={item.name}
+                category={category}
+            />
+            )
+            } else{
+              return(
+                <DataComponent
+                key={item.id}
+                id={item.id}
+                image={item.image}
+                name={item.name}
+                category={category}
+            />
+              ) 
+            }
+          })}
+        </ul>
+      </ErrorBoundary>
     </div>
   );
 };
