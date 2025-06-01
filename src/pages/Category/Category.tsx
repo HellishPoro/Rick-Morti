@@ -1,8 +1,8 @@
 import { useParams } from 'react-router-dom';
-import { usePageCategory } from '../../utils/usePageCharacter';
-import { RESOURCE_MAP } from '../../constants/ResourceMap';
-import ErrorBoundary from '../../utils/ErrorBoundary';
-import { DataComponent } from './components/DataComponent';
+import { usePageCategory } from '../../hooks/usePageCharacter';
+import { RESOURCE_MAP } from '../../data/ResourceMap';
+import ErrorBoundary from '../../common/ErrorBoundary';
+import { DataComponent } from '../../components/Category/DataComponent';
 import './Category.css'
 import { useCallback, useRef, useState } from 'react';
 

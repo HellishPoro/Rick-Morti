@@ -1,10 +1,10 @@
 import { useParams } from 'react-router-dom'
-import { Episode } from './components/Episode';
-import { Location } from './components/Location';
-import { Characters } from './components/Characters';
+import { Episode } from '../../components/Detail/Episode';
+import { Location } from '../../components/Detail/Location';
+import { Characters } from '../../components/Detail/Characters';
 import type { CharactersTypes, EpisodeTypes, LocationTypes } from '../../types/types';
-import { RESOURCE_MAP } from '../../constants/ResourceMap';
-import { useSingleItem } from '../../utils/useSingleItem';
+import { RESOURCE_MAP } from '../../data/ResourceMap';
+import { useSingleItem } from '../../hooks/useSingleItem';
 
 export const Detail = () => {
     const { category, id } = useParams<{category: string, id: string}>()
