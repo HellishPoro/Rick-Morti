@@ -4,7 +4,7 @@ import { RESOURCE_MAP } from '../../data/ResourceMap';
 import ErrorBoundary from '../../common/ErrorBoundary';
 import { DataComponent } from '../../components/Category/DataComponent';
 import './Category.css'
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 type RouteParams = {
   category?: string;
@@ -12,6 +12,7 @@ type RouteParams = {
 
 type ItemType = {
   id: number;
+  index?: number;
   name: string;
   image?: string;
 };
@@ -20,6 +21,10 @@ export const Category = ()=>{
   const { category } = useParams<RouteParams>()
   const [pageNumber, setPageNumber] = useState<number>(1);
   const resourceType = RESOURCE_MAP[category as string];
+
+  useEffect(() => {
+    setPageNumber(1);
+  }, [category]);
 
   const observer = useRef<IntersectionObserver | null>(null)
 
@@ -62,7 +67,7 @@ export const Category = ()=>{
               return (
                 <DataComponent
                 ref={lastNodeRef}
-                key={item.id}
+                key={`${item.id}-${index}`}
                 id={item.id}
                 image={item.image}
                 name={item.name}
@@ -72,7 +77,7 @@ export const Category = ()=>{
             } else{
               return(
                 <DataComponent
-                key={item.id}
+                key={`${item.id}-${index}`}
                 id={item.id}
                 image={item.image}
                 name={item.name}
