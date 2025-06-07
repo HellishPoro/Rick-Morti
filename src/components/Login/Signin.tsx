@@ -2,9 +2,7 @@ import { useState } from "react"
 import { PASSWORD_REGEX } from "../../constants/RegexConstants"
 import { useAuth } from "../../context/AuthProvider"
 import { useNavigate } from "react-router-dom"
-import Stack from '@mui/material/Stack'
-import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField';
+import { AuthForm } from "../../ui/AuthForm"
 import './Signin.css'
 
 export const Signin = () => {
@@ -37,62 +35,14 @@ export const Signin = () => {
   return (
     <div className="signin">
       <h1>Sign In</h1>
-      <form onSubmit={handleSubmit}>
-        <Stack direction="column" spacing={2} width="350px" margin="0 auto">
-        <TextField
-            label="Username"
-            value={user}
-            onChange={(e) => setUser(e.target.value)}
-            required
-            name="username"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            InputProps={{
-                style: {
-                color: "#ffffff",    
-                backgroundColor: "#1e1e1e",
-                borderRadius: '4px',
-                },
-            }}
-            InputLabelProps={{
-                style: {
-                color: "#cccccc",    
-                },
-            }}
+      <AuthForm
+        user={user}
+        setUser={setUser}
+        password={password}
+        setPassword={setPassword}
+        passwordError={passwordError}
+        onSubmit={handleSubmit}
         />
-
-
-        <TextField
-            label="Password"
-            type="password"
-            value={password}
-            name="password"
-            required
-            error={!!passwordError}
-            onChange={(e) => setPassword(e.target.value)}
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            InputProps={{
-                style: {
-                color: "#ffffff",        
-                backgroundColor: "#1e1e1e", 
-                borderRadius: '4px',
-                },
-            }}
-            InputLabelProps={{
-                style: {
-                color: "#cccccc",     
-                },
-            }}
-        />
-
-          <Button variant="contained" color="success" type="submit">
-            Sign in
-          </Button>
-        </Stack>
-      </form>
     </div>
   )
 }
