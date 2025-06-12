@@ -12,6 +12,15 @@ function App() {
   const Navbar = lazy(()=> import('./components/Navbar/NavBar').then(module => ({default: module.Navbar})))
   const AuthProvider = lazy(()=> import('./context/AuthProvider').then(module => ({default: module.AuthProvider})))
 
+
+  if("serviceWorker" in navigator) {
+    navigator.serviceWorker.register('/sw.js')
+      .then((reg)=>{
+        console.log("Service Worker registered successfully", reg)
+      }).catch(()=>{
+        console.error("Service Worker registration failed")
+      })
+  }
   return (
     <Suspense>
       <AuthProvider>
